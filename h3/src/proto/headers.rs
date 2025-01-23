@@ -1,9 +1,14 @@
-use std::{
+use core::{
     convert::TryFrom,
     fmt,
     iter::{IntoIterator, Iterator},
     str::FromStr,
 };
+use alloc::{
+    string::String,
+    vec::Vec
+};
+
 
 use http::{
     header::{self, HeaderName, HeaderValue},
@@ -316,7 +321,7 @@ where
     R: FromStr,
 {
     let (name, value) = (name.as_ref(), value.as_ref());
-    let s = std::str::from_utf8(value).map_err(|_| HeaderError::invalid_value(name, value))?;
+    let s = core::str::from_utf8(value).map_err(|_| HeaderError::invalid_value(name, value))?;
     R::from_str(s).map_err(|_| HeaderError::invalid_value(name, value))
 }
 
@@ -445,7 +450,7 @@ impl HeaderError {
     where
         N: AsRef<[u8]>,
     {
-        HeaderError::InvalidHeaderName(format!("{:?}", name.as_ref()))
+        HeaderError::InvalidHeaderName(alloc::format!("{:?}", name.as_ref()))
     }
 
     fn invalid_value<N, V>(name: N, value: V) -> Self
@@ -453,7 +458,7 @@ impl HeaderError {
         N: AsRef<[u8]>,
         V: AsRef<[u8]>,
     {
-        HeaderError::InvalidHeaderValue(format!(
+        HeaderError::InvalidHeaderValue(alloc::format!(
             "{:?} {:?}",
             String::from_utf8_lossy(name.as_ref()),
             value.as_ref()
@@ -461,7 +466,7 @@ impl HeaderError {
     }
 }
 
-impl std::error::Error for HeaderError {}
+impl core::error::Error for HeaderError {}
 
 impl fmt::Display for HeaderError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

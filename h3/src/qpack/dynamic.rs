@@ -1,7 +1,8 @@
-use std::{
+use alloc::{
     borrow::Cow,
-    collections::{btree_map::Entry as BTEntry, hash_map::Entry, BTreeMap, HashMap, VecDeque},
+    collections::{btree_map::Entry as BTEntry, BTreeMap, VecDeque},
 };
+use hashbrown::{HashMap, hash_map::Entry};
 
 use super::{field::HeaderField, static_::StaticTable};
 use crate::qpack::vas::{self, VirtualAddressSpace};
@@ -463,7 +464,7 @@ impl DynamicTable {
         for (reference, count) in refs {
             match self.track_map.entry(reference) {
                 BTEntry::Occupied(mut e) => {
-                    use std::cmp::Ordering;
+                    use core::cmp::Ordering;
                     match e.get().cmp(&count) {
                         Ordering::Less => {
                             return Err(Error::InvalidTrackingCount);
@@ -508,7 +509,7 @@ impl DynamicTable {
         let blocked = self
             .blocked_streams
             .split_off(&(self.largest_known_received + 1));
-        let acked = std::mem::replace(&mut self.blocked_streams, blocked);
+        let acked = core::mem::replace(&mut self.blocked_streams, blocked);
 
         if !acked.is_empty() {
             let total_acked = acked.iter().fold(0usize, |t, (_, v)| t + v);

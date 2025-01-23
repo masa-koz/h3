@@ -21,7 +21,8 @@
 //! }
 //! ```
 
-use std::{collections::HashSet, result::Result};
+use core::result::Result;
+use alloc::collections::BTreeSet as HashSet; 
 
 use bytes::Buf;
 

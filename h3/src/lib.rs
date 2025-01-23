@@ -2,6 +2,12 @@
 #![deny(missing_docs, clippy::self_named_module_files)]
 #![allow(clippy::derive_partial_eq_without_eq)]
 
+#![no_std]
+
+extern crate alloc;
+#[cfg(feature = "std")]
+extern crate std;
+
 pub mod client;
 
 mod config;

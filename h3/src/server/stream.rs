@@ -9,9 +9,9 @@ use crate::{
 };
 
 use super::connection::RequestEnd;
-use std::sync::Arc;
+use alloc::sync::Arc;
 
-use std::{
+use core::{
     option::Option,
     result::Result,
     task::{Context, Poll},

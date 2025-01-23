@@ -1,3 +1,5 @@
+use alloc::vec::Vec;
+
 use bytes::{Buf, BufMut};
 
 use super::{parse_error::ParseError, prefix_int, prefix_string};

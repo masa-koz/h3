@@ -12,7 +12,7 @@ use crate::{
     qpack,
     quic::{self},
 };
-use std::{
+use core::{
     convert::TryFrom,
     task::{Context, Poll},
 };

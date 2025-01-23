@@ -1,5 +1,7 @@
 use bytes::{Buf, BufMut};
-use std::{convert::TryInto, fmt, io::Cursor, num::TryFromIntError};
+use core::{convert::TryInto, fmt, num::TryFromIntError};
+use alloc::vec::Vec;
+use no_std_io::io::Cursor;
 
 #[cfg(feature = "tracing")]
 use tracing::trace;
@@ -40,10 +42,10 @@ pub enum Error {
     BufSize(TryFromIntError),
 }
 
-impl std::error::Error for Error {}
+impl core::error::Error for Error {}
 
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
+impl core::fmt::Display for Error {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Error::InvalidInteger(e) => write!(f, "invalid integer: {}", e),
             Error::InvalidString(e) => write!(f, "invalid string: {:?}", e),

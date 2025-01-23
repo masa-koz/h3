@@ -2,13 +2,16 @@
 //!
 //! The [`Connection`] struct manages a connection from the side of the HTTP/3 server
 
-use std::{
-    collections::HashSet,
+use core::{
     future::poll_fn,
     option::Option,
     result::Result,
-    sync::Arc,
     task::{ready, Context, Poll},
+};
+use alloc::{
+    collections::BTreeSet as HashSet,
+    sync::Arc,
+    string::String,
 };
 
 use bytes::Buf;
@@ -385,7 +388,7 @@ where
             //# H3_FRAME_UNEXPECTED.
             frame => {
                 return Poll::Ready(Err(Code::H3_FRAME_UNEXPECTED.with_reason(
-                    format!("on server control stream: {:?}", frame),
+                    alloc::format!("on server control stream: {:?}", frame),
                     ErrorLevel::ConnectionError,
                 )))
             }

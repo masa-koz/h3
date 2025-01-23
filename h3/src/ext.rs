@@ -1,6 +1,6 @@
 //! Extensions for the HTTP/3 protocol.
 
-use std::str::FromStr;
+use alloc::str::FromStr;
 
 /// Describes the `:protocol` pseudo-header for extended connect
 ///

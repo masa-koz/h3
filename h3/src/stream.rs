@@ -1,4 +1,4 @@
-use std::{
+use core::{
     marker::PhantomData,
     pin::Pin,
     task::{Context, Poll},
@@ -311,7 +311,7 @@ where
             //# to be a connection error of any kind.
             t => {
                 return Err(Code::H3_STREAM_CREATION_ERROR.with_reason(
-                    format!("unknown stream type 0x{:x}", t.value()),
+                    alloc::format!("unknown stream type 0x{:x}", t.value()),
                     crate::error::ErrorLevel::ConnectionError,
                 ))
             }
@@ -397,8 +397,8 @@ pin_project! {
     }
 }
 
-impl<S, B> std::fmt::Debug for BufRecvStream<S, B> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl<S, B> core::fmt::Debug for BufRecvStream<S, B> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("BufRecvStream")
             .field("buf", &self.buf)
             .field("eos", &self.eos)
@@ -469,7 +469,7 @@ impl<S: RecvStream, B> RecvStream for BufRecvStream<S, B> {
 
     fn poll_data(
         &mut self,
-        cx: &mut std::task::Context<'_>,
+        cx: &mut core::task::Context<'_>,
     ) -> Poll<Result<Option<Self::Buf>, Self::Error>> {
         // There is data buffered, return that immediately
         if let Some(chunk) = self.buf.take_first_chunk() {
@@ -500,7 +500,7 @@ where
 {
     type Error = S::Error;
 
-    fn poll_finish(&mut self, cx: &mut std::task::Context<'_>) -> Poll<Result<(), Self::Error>> {
+    fn poll_finish(&mut self, cx: &mut core::task::Context<'_>) -> Poll<Result<(), Self::Error>> {
         self.stream.poll_finish(cx)
     }
 
@@ -512,7 +512,7 @@ where
         self.stream.send_id()
     }
 
-    fn poll_ready(&mut self, cx: &mut std::task::Context<'_>) -> Poll<Result<(), Self::Error>> {
+    fn poll_ready(&mut self, cx: &mut core::task::Context<'_>) -> Poll<Result<(), Self::Error>> {
         self.stream.poll_ready(cx)
     }
 
@@ -529,7 +529,7 @@ where
     #[inline]
     fn poll_send<D: Buf>(
         &mut self,
-        cx: &mut std::task::Context<'_>,
+        cx: &mut core::task::Context<'_>,
         buf: &mut D,
     ) -> Poll<Result<usize, Self::Error>> {
         self.stream.poll_send(cx, buf)
@@ -565,6 +565,7 @@ where
     }
 }
 
+#[cfg(feature = "std")]
 impl<S, B> futures_util::io::AsyncRead for BufRecvStream<S, B>
 where
     B: Buf,
@@ -601,6 +602,7 @@ where
     }
 }
 
+#[cfg(feature = "std")]
 impl<S, B> tokio::io::AsyncRead for BufRecvStream<S, B>
 where
     B: Buf,
@@ -636,6 +638,7 @@ where
     }
 }
 
+#[cfg(feature = "std")]
 impl<S, B> futures_util::io::AsyncWrite for BufRecvStream<S, B>
 where
     B: Buf,
@@ -661,6 +664,7 @@ where
     }
 }
 
+#[cfg(feature = "std")]
 impl<S, B> tokio::io::AsyncWrite for BufRecvStream<S, B>
 where
     B: Buf,

@@ -1,10 +1,11 @@
 //! HTTP/3 client builder
 
-use std::{
+use core::{
     marker::PhantomData,
-    sync::{atomic::AtomicUsize, Arc},
+    sync::atomic::AtomicUsize,
     task::Poll,
 };
+use alloc::sync::Arc;
 
 use bytes::{Buf, Bytes};
 use futures_util::future;

@@ -1,4 +1,5 @@
-use std::collections::VecDeque;
+use alloc::collections::VecDeque;
+#[cfg(feature = "std")]
 use std::io::IoSlice;
 
 use bytes::{Buf, Bytes};
@@ -98,6 +99,7 @@ impl<T: Buf> Buf for BufList<T> {
         }
     }
 
+    #[cfg(feature = "std")]
     #[inline]
     fn chunks_vectored<'t>(&'t self, dst: &mut [IoSlice<'t>]) -> usize {
         if dst.is_empty() {
@@ -159,6 +161,7 @@ impl<'a, B: Buf> Buf for Cursor<'a, B> {
         }
     }
 
+    #[cfg(feature = "std")]
     #[inline]
     fn chunks_vectored<'t>(&'t self, dst: &mut [IoSlice<'t>]) -> usize {
         self.buf.chunks_vectored(dst)

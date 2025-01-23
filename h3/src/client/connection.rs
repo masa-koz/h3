@@ -1,10 +1,11 @@
 //! Client implementation of the HTTP/3 protocol
 
-use std::{
+use core::{
     marker::PhantomData,
-    sync::{atomic::AtomicUsize, Arc},
+    sync::atomic::AtomicUsize,
     task::{Context, Poll, Waker},
 };
+use alloc::sync::Arc;
 
 use bytes::{Buf, BytesMut};
 use futures_util::future;
@@ -213,7 +214,7 @@ where
 {
     fn clone(&self) -> Self {
         self.sender_count
-            .fetch_add(1, std::sync::atomic::Ordering::Release);
+            .fetch_add(1, core::sync::atomic::Ordering::Release);
 
         Self {
             open: self.open.clone(),
@@ -235,7 +236,7 @@ where
     fn drop(&mut self) {
         if self
             .sender_count
-            .fetch_sub(1, std::sync::atomic::Ordering::AcqRel)
+            .fetch_sub(1, core::sync::atomic::Ordering::AcqRel)
             == 1
         {
             if let Some(w) = Option::take(&mut self.conn_waker) {
@@ -400,7 +401,7 @@ where
                     //# of any other type as a connection error of type H3_ID_ERROR.
                     if !StreamId::from(id).is_request() {
                         return Poll::Ready(Err(Code::H3_ID_ERROR.with_reason(
-                            format!("non-request StreamId in a GoAway frame: {}", id),
+                            alloc::format!("non-request StreamId in a GoAway frame: {}", id),
                             ErrorLevel::ConnectionError,
                         )));
                     }
@@ -420,7 +421,7 @@ where
                 //# H3_FRAME_UNEXPECTED.
                 Ok(frame) => {
                     return Poll::Ready(Err(Code::H3_FRAME_UNEXPECTED.with_reason(
-                        format!("on client control stream: {:?}", frame),
+                        alloc::format!("on client control stream: {:?}", frame),
                         ErrorLevel::ConnectionError,
                     )))
                 }

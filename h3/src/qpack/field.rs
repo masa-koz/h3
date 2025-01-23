@@ -1,7 +1,10 @@
-use std::{
+use core::fmt::{Display, Formatter};
+use alloc::{
     borrow::Cow,
-    fmt::{Display, Formatter},
+    string::String,
+    vec::Vec,
 };
+
 
 /**
  * https://tools.ietf.org/html/rfc7541
@@ -53,7 +56,7 @@ impl AsRef<HeaderField> for HeaderField {
 }
 
 impl Display for HeaderField {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), std::fmt::Error> {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), core::fmt::Error> {
         write!(
             f,
             "\"{}\": \"{}\"",
@@ -66,7 +69,7 @@ impl Display for HeaderField {
 
 impl From<HeaderField> for String {
     fn from(field: HeaderField) -> String {
-        format!(
+        alloc::format!(
             "{}\t{}",
             String::from_utf8_lossy(&field.name),
             String::from_utf8_lossy(&field.value)

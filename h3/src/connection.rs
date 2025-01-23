@@ -1,13 +1,18 @@
-use std::{
+use core::{
     convert::TryFrom,
     marker::PhantomData,
-    sync::{Arc, RwLock, RwLockReadGuard, RwLockWriteGuard},
     task::{Context, Poll},
+};
+use alloc::{
+    sync::Arc,
+    vec,
+    vec::Vec,
 };
 
 use bytes::{Buf, Bytes, BytesMut};
 use futures_util::{future, ready};
 use http::HeaderMap;
+use spin::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 use stream::WriteBuf;
 
 #[cfg(feature = "tracing")]
@@ -46,11 +51,11 @@ pub struct SharedStateRef(Arc<RwLock<SharedState>>);
 
 impl SharedStateRef {
     pub fn read(&self, panic_msg: &'static str) -> RwLockReadGuard<SharedState> {
-        self.0.read().expect(panic_msg)
+        self.0.read()
     }
 
     pub fn write(&self, panic_msg: &'static str) -> RwLockWriteGuard<SharedState> {
-        self.0.write().expect(panic_msg)
+        self.0.write()
     }
 }
 
@@ -69,7 +74,7 @@ pub trait ConnectionState {
     fn shared_state(&self) -> &SharedStateRef;
 
     fn maybe_conn_err<E: Into<Error>>(&self, err: E) -> Error {
-        if let Some(ref e) = self.shared_state().0.read().unwrap().error {
+        if let Some(ref e) = self.shared_state().0.read().error {
             e.clone()
         } else {
             err.into()
@@ -494,7 +499,7 @@ where
                             //# H3_MISSING_SETTINGS.
                             Err(self.close(
                                 Code::H3_MISSING_SETTINGS,
-                                format!("received {:?} before settings on control stream", f),
+                                alloc::format!("received {:?} before settings on control stream", f),
                             ))
                         }
                     }
@@ -522,7 +527,7 @@ where
                     //# connection error of type H3_FRAME_UNEXPECTED.
                     frame => Err(self.close(
                         Code::H3_FRAME_UNEXPECTED,
-                        format!("on control stream: {:?}", frame),
+                        alloc::format!("on control stream: {:?}", frame),
                     )),
                 }
             }
@@ -569,7 +574,7 @@ where
                     //# received MUST be treated as a connection error of type H3_ID_ERROR.
                     return Err(self.close(
                         Code::H3_ID_ERROR,
-                        format!(
+                        alloc::format!(
                             "received a GoAway({}) greater than the former one ({})",
                             id, prev_id
                         ),

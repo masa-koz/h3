@@ -1,6 +1,8 @@
-use std::{cmp, io::Cursor};
+use core::cmp;
+use alloc::vec::Vec;
 
 use bytes::{Buf, BufMut};
+use no_std_io::io::Cursor;
 
 use super::{
     block::{
@@ -30,10 +32,10 @@ pub enum Error {
     UnknownDecoderInstruction(u8),
 }
 
-impl std::error::Error for Error {}
+impl core::error::Error for Error {}
 
-impl std::fmt::Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Display for Error {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Error::Insertion(e) => write!(f, "dynamic table insertion: {:?}", e),
             Error::InvalidString(e) => write!(f, "could not parse string: {}", e),

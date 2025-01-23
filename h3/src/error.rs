@@ -1,11 +1,15 @@
 //! HTTP/3 Error types
 
-use std::{fmt, sync::Arc};
+use core::fmt;
+use alloc::{
+    boxed::Box,
+    sync::Arc,
+};
 
 use crate::{frame, proto, qpack, quic};
 
 /// Cause of an error thrown by our own h3 layer
-type Cause = Box<dyn std::error::Error + Send + Sync>;
+type Cause = Box<dyn core::error::Error + Send + Sync>;
 /// Error thrown by the underlying QUIC impl
 pub(crate) type TransportError = Box<dyn quic::Error>;
 
@@ -42,7 +46,7 @@ impl PartialEq<u64> for Code {
 #[derive(Clone)]
 pub(crate) struct ErrorImpl {
     pub(crate) kind: Kind,
-    cause: Option<Arc<dyn std::error::Error + Send + Sync>>,
+    cause: Option<Arc<dyn core::error::Error + Send + Sync>>,
 }
 
 /// Some errors affect the whole connection, others only one Request or Stream.
@@ -359,8 +363,8 @@ impl fmt::Display for Error {
     }
 }
 
-impl std::error::Error for Error {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+impl core::error::Error for Error {
+    fn source(&self) -> Option<&(dyn core::error::Error + 'static)> {
         self.inner.cause.as_ref().map(|e| e as _)
     }
 }
@@ -440,7 +444,7 @@ impl From<frame::FrameStreamError> for Error {
     }
 }
 
-impl From<Error> for Box<dyn std::error::Error + std::marker::Send> {
+impl From<Error> for Box<dyn core::error::Error + core::marker::Send> {
     fn from(e: Error) -> Self {
         Box::new(e)
     }
@@ -470,7 +474,7 @@ where
 
 impl From<proto::stream::InvalidStreamId> for Error {
     fn from(e: proto::stream::InvalidStreamId) -> Self {
-        Self::from(Code::H3_ID_ERROR).with_cause(format!("{}", e))
+        Self::from(Code::H3_ID_ERROR).with_cause(alloc::format!("{}", e))
     }
 }
 

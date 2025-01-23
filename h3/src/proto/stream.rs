@@ -1,5 +1,5 @@
 use bytes::{Buf, BufMut};
-use std::{
+use core::{
     convert::TryFrom,
     fmt::{self, Display},
     ops::Add,

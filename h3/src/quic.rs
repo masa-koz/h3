@@ -3,7 +3,8 @@
 //! This module includes traits and types meant to allow being generic over any
 //! QUIC implementation.
 
-use std::task::{self, Poll};
+use core::task::{self, Poll};
+use alloc::boxed::Box;
 
 use bytes::Buf;
 
@@ -15,7 +16,7 @@ pub use crate::stream::WriteBuf;
 // - Should the `poll_` methods be `Pin<&mut Self>`?
 
 /// Trait that represent an error from the transport layer
-pub trait Error: std::error::Error + Send + Sync {
+pub trait Error: core::error::Error + Send + Sync {
     /// Check if the current error is a transport timeout
     fn is_timeout(&self) -> bool;
 
